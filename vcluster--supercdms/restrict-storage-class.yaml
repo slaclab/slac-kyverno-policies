@@ -1,0 +1,27 @@
+apiVersion: kyverno.io/v1
+kind: Policy
+metadata:
+  name: restrict-storage-class
+  annotations:
+    policies.kyverno.io/title: Restrict Storage Classes
+    policies.kyverno.io/category: Storage
+    policies.kyverno.io/severity: moderate
+    policies.kyverno.io/subject: Storage Class
+    policies.kyverno.io/description: >-
+      Restrict PersistentVolumeClaim resources to a set of known storage
+      classes that are allowed for a namespace.
+spec:
+  rules:
+  - name: validate-pvc-sc
+    match:
+      resources:
+        kinds:
+        - PersistentVolumeClaim
+    validate:
+      message: "Storage classes for this namespace are restricted to `local-storage` and `sdf-group-supercdms`"
+      pattern:
+        spec:
+          ^(storageClassName):
+            - local-storage
+            - sdf-group-supercdms
+
